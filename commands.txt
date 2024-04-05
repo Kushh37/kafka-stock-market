@@ -1,0 +1,35 @@
+# Download Kafka
+wget https://downloads.apache.org/kafka/3.7.0/kafka_2.12-3.7.0.tgz
+tar -xvf kafka_2.12-3.7.0.tgz
+
+
+# Install Java
+java -version
+sudo yum install java-1.8.0-openjdk
+java -version
+cd kafka_2.12-3.7.0
+
+# Start Zoo-keeper:
+bin/zookeeper-server-start.sh config/zookeeper.properties
+
+
+# Duplicate the session and create new console
+export KAFKA_HEAP_OPTS="-Xmx256M -Xms128M"
+cd kafka_2.12-3.7.0
+bin/kafka-server-start.sh config/server.properties
+
+# Change server.properties so that it can run in public IP 
+sudo nano config/server.properties"
+change ADVERTISED_LISTENERS to public IP
+
+
+# Create the topic:
+cd kafka_2.12-3.7.0
+bin/kafka-topics.sh --create --topic demo --bootstrap-server {Public IP of your EC2 Instance:9092} --replication-factor 1 --partitions 1
+
+# Start Producer:
+bin/kafka-console-producer.sh --topic demo --bootstrap-server {Public IP of your EC2 Instance:9092} 
+
+# Start Consumer:
+cd kafka_2.12-3.7.0
+bin/kafka-console-consumer.sh --topic demo --bootstrap-server {Public IP of your EC2 Instance:9092}
